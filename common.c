@@ -1,6 +1,46 @@
 #include "common.h"
 
 
+/*
+start:
+0 1 3 7
+1 0 1 -
+3 1 0 2
+7 - 2 0
+
+
+slut:
+0 1 2 4
+1 0 1 3
+2 1 0 2
+4 3 2 0
+
+
+node 0:
+0 1 -
+1 0 2
+- 2 0
+
+
+node 1:
+0 2
+2 0
+4 2
+
+node 2:
+0 1 3
+1 0 3
+4 3 0
+
+node 3:
+0 2
+1 1
+2 0
+
+ * */
+
+// costs[TO][FROM]
+
 void makeAndSendPacket(int from, int to, int costs[4][4])
 {
     struct rtpkt pkt;
@@ -19,7 +59,7 @@ void makeAndSendPacket(int from, int to, int costs[4][4])
 // row: dest 
 // col: source
 // rval: costs have changed
-bool updateCosts(int (*costs)[4][4], int update_col) {
+bool updateCosts(int (*costs)[4][4], const int update_col) {
     bool rval = false;
     for (int i = 0; i<vert; i++) {
         for (int j = 0; j<vert; j++) {
@@ -35,14 +75,47 @@ bool updateCosts(int (*costs)[4][4], int update_col) {
     return rval;
 }
 
-
-bool rtupdate_all(struct rtpkt *pkt, int (*costs)[4][4], int node_id) {
-    if (pkt->destid!=node_id) {printf("invalid recived id"); exit(1);}  
-        
+bool check_symmetric(int (*costs)[4][4]) {
     for (int i = 0; i<vert; i++) {
-        (*costs)[pkt->sourceid][i] = pkt->mincost[i];
+        for (int j = 0; j<vert; j++) {
+            if ((*costs)[i][j] != (*costs)[j][i]) {
+                if ((*costs)[i][j] > (*costs)[j][i]) {
+                    (*costs)[i][j]=(*costs)[j][i];
+                }
+                else {
+                    (*costs)[j][i]=(*costs)[i][j];
+
+                }
+                return false;
+            }
+        }
     }
-    return updateCosts(costs, node_id);
+    return true;
+}
+
+bool rtupdate_all(struct rtpkt *pkt, int (*costs)[4][4], const int node_id) {
+    if (pkt->destid!=node_id) {printf("invalid recived id"); exit(1);}  
+    if (pkt->sourceid==node_id) {printf("sent packet to self"); exit(1);}  
+    
+
+    bool rval = false;
+    for (int i = 0; i<vert; i++) {
+        int new = pkt->mincost[i];
+        int old = (*costs)[pkt->sourceid][i];
+
+        if (new > old) {
+            rval = true;
+            //printf("cost was increased for node %d (from %d to %d) with packet from %d to %d", node_id, old, new, pkt->sourceid, pkt->destid);
+            //exit(1);
+        }
+        if (new < old) {
+            (*costs)[pkt->sourceid][i] = pkt->mincost[i];
+            rval = true;
+        }
+    }
+    rval = rval || updateCosts(costs, node_id);
+    rval = rval || check_symmetric(costs);
+    return rval;
 }
 
 

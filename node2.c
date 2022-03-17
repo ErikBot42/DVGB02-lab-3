@@ -1,5 +1,5 @@
 #include "prog3.h"
-
+#include "common.h"
 
 struct distance_table {
     int costs[4][4];
@@ -33,12 +33,25 @@ void rtinit2()
     dt2.costs[2][2] = 0; 
     dt2.costs[3][2] = 2; 
     printdt2(&dt2);
+    makeAndSendPacket(2, 0, dt2.costs);
+    makeAndSendPacket(2, 1, dt2.costs);
+    makeAndSendPacket(2, 3, dt2.costs);
 }
 
 
 void rtupdate2(struct rtpkt *rcvdpkt)
 {
+    printf("\033[1;33mRTUPDATE2");
+    printdt2(&dt2);
 
+    if (rtupdate_all(rcvdpkt, &dt2.costs, 2))
+    {
+        makeAndSendPacket(2, 0, dt2.costs);
+        makeAndSendPacket(2, 1, dt2.costs);
+        makeAndSendPacket(2, 3, dt2.costs);
+    }
+    printdt2(&dt2);
+    printf("-----\n\033[0m");
 }
 
 

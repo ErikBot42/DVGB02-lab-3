@@ -46,12 +46,16 @@ void rtinit0()
 // packet received
 void rtupdate0(struct rtpkt *rcvdpkt)
 {
+    printf("\033[0;33mRTUPDATE0");
+    printdt0(&dt0);
     if (rtupdate_all(rcvdpkt, &dt0.costs, 0))
     {
         makeAndSendPacket(0, 1, dt0.costs);
         makeAndSendPacket(0, 2, dt0.costs);
         makeAndSendPacket(0, 3, dt0.costs);
     }
+    printdt0(&dt0);
+    printf("-----\n\033[0m");
 }
 
 

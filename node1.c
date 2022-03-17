@@ -34,20 +34,22 @@ void rtinit1()
     printdt1(&dt1);
 
 
-    makeAndSendPacket(1, 1, dt1.costs);
+    makeAndSendPacket(1, 0, dt1.costs);
     makeAndSendPacket(1, 2, dt1.costs);
-    makeAndSendPacket(1, 3, dt1.costs);
 }
 
 
 void rtupdate1(struct rtpkt *rcvdpkt)
 {
-    if (rtupdate_all(rcvdpkt, &dt1.costs, 0))
+    printf("\033[0;36mRTUPDATE1");
+    printdt1(&dt1);
+    if (rtupdate_all(rcvdpkt, &dt1.costs, 1))
     {
-        makeAndSendPacket(1, 1, dt1.costs);
+        makeAndSendPacket(1, 0, dt1.costs);
         makeAndSendPacket(1, 2, dt1.costs);
-        makeAndSendPacket(1, 3, dt1.costs);
     }
+    printdt1(&dt1);
+    printf("-----\n\033[0m");
 }
 
 
