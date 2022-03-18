@@ -55,6 +55,16 @@ void makeAndSendPacket(int from, int to, int costs[4][4])
     tolayer2(pkt);
 }
 
+void printMatrix(int costs[4][4], int node)
+{
+    printf("\n   D%d |    0    1    2    3 \n", node);
+    printf("------|---------------------\n", node);
+    printf("     0|  %3d  %3d  %3d  %3d \n", costs[0][0], costs[0][1], costs[0][2], costs[0][3]);
+    printf("     1|  %3d  %3d  %3d  %3d \n", costs[1][0], costs[1][1], costs[1][2], costs[1][3]);
+    printf("     2|  %3d  %3d  %3d  %3d \n", costs[2][0], costs[2][1], costs[2][2], costs[2][3]);
+    printf("     3|  %3d  %3d  %3d  %3d \n", costs[3][0], costs[3][1], costs[3][2], costs[3][3]);
+}
+
 
 // row: dest 
 // col: source
@@ -86,6 +96,7 @@ bool check_symmetric(int (*costs)[4][4]) {
                     (*costs)[j][i]=(*costs)[i][j];
 
                 }
+
                 return false;
             }
         }
@@ -100,8 +111,8 @@ bool rtupdate_all(struct rtpkt *pkt, int (*costs)[4][4], const int node_id) {
 
     bool rval = false;
     for (int i = 0; i<vert; i++) {
-        int new = pkt->mincost[i];
-        int old = (*costs)[pkt->sourceid][i];
+        const int new = pkt->mincost[i];
+        const int old = (*costs)[pkt->sourceid][i];
 
         if (new > old) {
             rval = true;
@@ -113,8 +124,8 @@ bool rtupdate_all(struct rtpkt *pkt, int (*costs)[4][4], const int node_id) {
             rval = true;
         }
     }
-    rval = rval || updateCosts(costs, node_id);
-    rval = rval || check_symmetric(costs);
+    updateCosts(costs, node_id);
+    check_symmetric(costs);
     return rval;
 }
 

@@ -10,12 +10,13 @@ struct distance_table {
 
 void printdt1(struct distance_table *dtptr)
 {
-    printf("             via   \n");
-    printf("   D1 |    0     2 \n");
-    printf("  ----|-----------\n");
-    printf("     0|  %3d   %3d\n", dtptr->costs[0][0], dtptr->costs[0][2]);
-    printf("dest 2|  %3d   %3d\n", dtptr->costs[2][0], dtptr->costs[2][2]);
-    printf("     3|  %3d   %3d\n", dtptr->costs[3][0], dtptr->costs[3][2]);
+    printMatrix(dtptr->costs, 1);
+    //printf("             via   \n");
+    //printf("   D1 |    0     2 \n");
+    //printf("  ----|-----------\n");
+    //printf("     0|  %3d   %3d\n", dtptr->costs[0][0], dtptr->costs[0][2]);
+    //printf("dest 2|  %3d   %3d\n", dtptr->costs[2][0], dtptr->costs[2][2]);
+    //printf("     3|  %3d   %3d\n", dtptr->costs[3][0], dtptr->costs[3][2]);
 
 }
 
